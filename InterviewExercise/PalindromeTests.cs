@@ -3,6 +3,76 @@ using NUnit.Framework;
 
 namespace InterviewExercise
 {
+    public class PalindromeMakerTests
+    {
+        private Palindrome _palindrome;
+        private PalindromeMaker _palindromeMaker;
+
+
+        [SetUp]
+        public void SetUp()
+        {
+            _palindrome = new Palindrome();
+            _palindromeMaker = new PalindromeMaker();
+        }
+
+        [TestCase(null, ExpectedException = typeof (ArgumentNullException))]
+        [TestCase("aaaa")]
+        [TestCase("abba")]
+        [TestCase("amanaplanacanal")]
+        [TestCase("xyz")]
+        [TestCase("")]
+        [TestCase("A")]
+        public void ShouldCreatePalindrome(string input)
+        {
+            var palindrome = _palindromeMaker.MakePalindrome(input);
+            Assert.That(_palindrome.IsPalindrome(palindrome), Is.True);
+        }
+    }
+
+    public class PalindromeMaker
+    {
+        private readonly Palindrome _palindrome;
+
+        internal PalindromeMaker(Palindrome palindrome)
+        {
+            _palindrome = palindrome;
+        }
+
+        public PalindromeMaker() : this(new Palindrome())
+        {
+        }
+
+        public string MakePalindrome(string input)
+        {
+            if (_palindrome.IsPalindrome(input))
+            {
+                return input;
+            }
+
+            //0
+            //1
+
+            var length = input.Length;
+            var previous = "";
+
+            for (var i = 0; i < length; i++)
+            {
+                var substringToAppend = input[i];
+                var candidate = string.Concat(input, substringToAppend, previous);
+                Console.WriteLine(candidate);
+
+                if (_palindrome.IsPalindrome(candidate))
+                {
+                    return candidate;
+                }
+
+                previous = string.Concat(substringToAppend, previous);
+            }
+            return input;
+        }
+    }
+
     public class PalindromeTests
     {
         private Palindrome _palindrome;
@@ -13,6 +83,7 @@ namespace InterviewExercise
             _palindrome = new Palindrome();
         }
 
+        [TestCase(null, true, ExpectedException = typeof (ArgumentNullException))]
         [TestCase("aaaa", true)]
         [TestCase("abba", true)]
         [TestCase("amanaplanacanalpanama", true)]
@@ -51,24 +122,12 @@ namespace InterviewExercise
             }
 
             var isEvenLength = length % 2 == 0;
-            var endIndex = length - 1;
-            if (isEvenLength)
+            var lastIndex = length - 1;
+            var iterationLimit = isEvenLength ? lastIndex : lastIndex - 1;
+
+            for (var i = 0; i < iterationLimit; i++)
             {
-
-                for (var i = 0; i < length - 1; i++)
-                {
-                    if (s[i] != s[endIndex - i])
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            for (var i = 0; i < length - 2; i++)
-            {
-                if (s[i] != s[endIndex - i])
+                if (s[i] != s[lastIndex - i])
                 {
                     return false;
                 }
