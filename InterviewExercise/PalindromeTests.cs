@@ -3,11 +3,37 @@ using NUnit.Framework;
 
 namespace InterviewExercise
 {
+    public class Exercise
+    {
+        private string[] ReadLinesFromSource()
+        {
+            return new[]
+            {
+                "aaaa",
+                "abba",
+                "amanaplanacanal",
+                "xyz"
+            };
+        }
+
+        [Test]
+        public void ShouldCreateNewPalindromes()
+        {
+            var maker = new PalindromeMaker();
+            var lines = ReadLinesFromSource();
+            foreach (var line in lines)
+            {
+                Console.WriteLine("Source: {0}. Result: {1}",
+                                  line,
+                                  maker.MakePalindrome(line));
+            }
+        }
+    }
+
     public class PalindromeMakerTests
     {
         private Palindrome _palindrome;
         private PalindromeMaker _palindromeMaker;
-
 
         [SetUp]
         public void SetUp()
@@ -36,6 +62,8 @@ namespace InterviewExercise
 
         internal PalindromeMaker(Palindrome palindrome)
         {
+            // Would normally use dependency injection. Would normally use 
+            // interface for more complex cases (i.e. IPalindrome).
             _palindrome = palindrome;
         }
 
@@ -50,24 +78,21 @@ namespace InterviewExercise
                 return input;
             }
 
-            //0
-            //1
-
             var length = input.Length;
-            var previous = "";
+            var previousAttempt = string.Empty;
 
             for (var i = 0; i < length; i++)
             {
-                var substringToAppend = input[i];
-                var candidate = string.Concat(input, substringToAppend, previous);
-                Console.WriteLine(candidate);
+                var currentCharacter = input[i];
+                var currentAttempt = string.Concat(currentCharacter, previousAttempt);
+                var candidate = string.Concat(input, currentAttempt);
 
                 if (_palindrome.IsPalindrome(candidate))
                 {
                     return candidate;
                 }
 
-                previous = string.Concat(substringToAppend, previous);
+                previousAttempt = currentAttempt;
             }
             return input;
         }
